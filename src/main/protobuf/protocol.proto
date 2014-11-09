@@ -1,0 +1,100 @@
+package coinport;
+
+option java_package = "com.coinport";
+option java_outer_classname="Protocol";
+
+
+message Key {
+	required bytes raw = 1;
+}
+
+message Contact {
+	required string host = 1;
+	required int32 port = 2;
+	optional Key id = 3;
+}
+
+message Node {
+	required Contact contact = 1;
+	optional bytes data = 2;
+}
+
+/////
+message PING {}
+
+message OK{}
+
+message STORE {
+	required bytes content = 1;
+}
+
+message FIND_NODE {
+	required Key id = 1;
+}
+
+message FIND_NODE_RESP {
+	repeated Node nodes = 1;
+}
+
+message FIND_VALUE {
+	required Key key = 1;
+}
+
+message FIND_VALUE_RESP {
+	optional Key key = 1;
+	optional bytes value = 2;
+	repeated Node nodes = 3;
+}
+
+message Msg {
+	optional	PING 				ping = 1;
+	optional	STORE				store = 2;
+	optional	FIND_NODE 			findNode = 3;
+	optional	FIND_NODE_RESP 		findNodeResp= 4;
+	optional	OK   				ok = 5;
+	optional 	FIND_VALUE 			findValue = 6;
+	optional	FIND_VALUE_RESP  	findValueResp = 7;
+}
+
+
+/////////
+
+// can then be send to the DHT actor.
+
+message SendMessage {
+	required Contact dest = 1;
+	required Msg msg = 2;
+}
+
+message AddSeeds {
+	repeated Contact seeds = 1;
+}
+
+// Internal messages
+message Envelope {
+	required Key invocationId = 1;
+	required Msg msg = 2;
+	optional Node node = 3;
+}
+
+message OutgoingEnvelope {
+	required Contact dest = 1;
+	required Envelope envelope = 2;
+}
+
+
+message ReceivedEnvelope {
+	required Contact src = 1;
+	required Envelope envelope = 2;
+}
+
+message InvocationTimeout {
+	repeated Contact contacts = 1;
+}
+
+/////////
+
+message RegisterNetworkListener{}
+message NetworkListenerRegistered{}
+message RegisterInvocationTimeoutListener{}
+message InvocationTimeoutListenerRegistered{}
